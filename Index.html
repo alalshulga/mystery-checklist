@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Чек-лист тайного покупателя - Фитнес-клуб</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.08);
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 10px;
+    }
+
+    .badge span.emoji {
+      font-size: 14px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 8px;
+      margin: 0 -8px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #f9fafb;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tab-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #4b5563;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .tab-btn span.icon {
+      font-size: 14px;
+    }
+
+    .tab-btn.active {
+      background: #0f766e;
+      color: #ecfdf5;
+      border-color: #0f766e;
+      box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);
+    }
+
+    .tab-btn.disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .tab-btn:not(.disabled):active {
+      transform: translateY(1px);
+    }
+
+    /* Form sections */
+    .form-section {
+      display: none;
+      padding-top: 4px;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      margin: 0 0 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    @media (min-width: 720px) {
+      .form-grid.two-col {
+        grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .field-label span.meta {
+      font-size: 10px;
+      color: #9ca3af;
+      font-weight: 400;
+    }
+
+    .field-helper {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 9px 11px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #111827;
+      background: #f9fafb;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #0f766e;
+      box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.2);
+      background: #ffffff;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    /* Checkbox row */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: #0f766e;
+    }
+
+    .check-row label {
+      font-size: 13px;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    /* Rating */
+    .rating-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rating-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .rating-btn {
+      min-width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .rating-btn.selected {
+      background: #0f766e;
+      color: #ecfdf5;
+      border-color: #0f766e;
+      box-shadow: 0 3px 8px rgba(15, 118, 110, 0.25);
+    }
+
+    .rating-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Buttons row */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .left-actions,
+    .right-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 9px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease, color 0.15s ease;
+    }
+
+    .btn-primary {
+      background: #0f766e;
+      color: #ecfdf5;
+      box-shadow: 0 8px 20px rgba(15, 118, 110, 0.35);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 10px rgba(15, 118, 110, 0.35);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .btn-secondary:active {
+      transform: translateY(1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #6b7280;
+    }
+
+    .btn-ghost:hover {
+      background: #f3f4f6;
+    }
+
+    .btn[disabled] {
+      opacity: 0.45;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Club info intro */
+    .club-intro {
+      font-size: 13px;
+      color: #4b5563;
+      margin: 8px 0 14px;
+    }
+
+    .club-intro strong {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* Report */
+    .report {
+      display: none;
+    }
+
+    .report.active {
+      display: block;
+    }
+
+    .report-header {
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .report-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .report-meta {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .report-section {
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+
+    .report-section:last-child {
+      border-bottom: none;
+    }
+
+    .report-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #111827;
+    }
+
+    .report-item {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .report-item-label {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .report-item-value {
+      color: #111827;
+    }
+
+    .report-empty {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    /* Small badge for step */
+    .step-indicator {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 600px) {
+      .header-title {
+        font-size: 18px;
+      }
+      .card {
+        border-radius: 12px;
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="card">
+    <h1 class="header-title">
+      🕵️‍♂️ Чек-лист тайного покупателя
+    </h1>
+    <p class="header-subtitle">
+      Оценка работы фитнес-клуба по 17 ключевым блокам: от первого впечатления до финальной рекомендации.
+    </p>
+    <div class="badge">
+      <span class="emoji">⚙️</span>
+      <span>Версия для локального использования (без сервера)</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="card" id="navCard">
+    <div class="step-indicator" id="stepInfo"></div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <!-- Form -->
+  <div class="card" id="formCard">
+    <div id="formContainer"></div>
+    <div class="actions">
+      <div class="left-actions">
+        <button class="btn btn-secondary" id="clearBtn" type="button">Очистить всё</button>
+      </div>
+      <div class="right-actions">
+        <button class="btn btn-ghost" id="backToClubInfoBtn" type="button" style="display:none;">К информации о клубе</button>
+        <button class="btn btn-secondary" id="backSectionBtn" type="button">Назад</button>
+        <button class="btn btn-primary" id="nextSectionBtn" type="button">Далее</button>
+        <button class="btn btn-primary" id="reportBtn" type="button">Получить отчёт</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report -->
+  <div class="card report" id="reportCard">
+    <div class="report-header">
+      <h2 class="report-title">📊 Итоговый отчёт тайного покупателя</h2>
+      <div class="report-meta" id="reportMeta"></div>
+    </div>
+    <div id="reportContent"></div>
+    <div class="actions" style="margin-top: 16px;">
+      <div class="left-actions">
+        <button class="btn btn-secondary" id="editBtn" type="button">Вернуться к форме</button>
+      </div>
+      <div class="right-actions">
+        <button class="btn btn-ghost" id="printBtn" type="button">Печать / PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // GLOBAL STATE - Never resets except when clearing
+  const formState = {};
+  let currentSectionIndex = 0;
+
+  // All 17 sections (structure как в последней версии)
+  const sections = [
+    {
+      id: 'club_info',
+      name: 'Информация о клубе',
+      icon: '🏢',
+      questions: [
+        { id: 'club_name', type: 'text', label: 'Название фитнес-клуба *', placeholder: 'Введите название клуба', required: true },
+        { id: 'club_address', type: 'text', label: 'Адрес клуба', placeholder: 'Введите адрес', required: false }
+      ]
+    },
+    {
+      id: 'location',
+      name: 'Расположение и парковка',
+      icon: '📍',
+      questions: [
+        { id: 'loc_convenient', type: 'checkbox', label: 'Удобное месторасположение' },
+        { id: 'loc_parking_available', type: 'checkbox', label: 'Парковка доступна' },
+        { id: 'loc_parking_type', type: 'select', label: 'Тип парковки', options: ['Собственная парковка', 'Платная парковка', 'Городская парковка', 'Нет парковки'] },
+        { id: 'loc_parking_distance', type: 'text', label: 'Расстояние от входа (м)' },
+        { id: 'loc_notes', type: 'textarea', label: 'Примечания о парковке и расположении' }
+      ]
+    },
+    {
+      id: 'entrance',
+      name: 'Входная группа',
+      icon: '🚪',
+      questions: [
+        { id: 'ent_clean', type: 'checkbox', label: 'Чистая входная группа' },
+        { id: 'ent_greeting', type: 'checkbox', label: 'Приветствие при входе' },
+        { id: 'ent_beverages', type: 'checkbox', label: 'Предложены напитки' },
+        { id: 'ent_beverage_type', type: 'select', label: 'Какие напитки предложены', options: ['Вода', 'Чай', 'Кофе', 'Другое', 'Ничего'] },
+        { id: 'ent_impression', type: 'rating', label: 'Первое впечатление (1-5)', max: 5 }
+      ]
+    },
+    {
+      id: 'waiting',
+      name: 'Ожидание и встреча',
+      icon: '⏱️',
+      questions: [
+        { id: 'wait_minutes', type: 'number', label: 'Время ожидания менеджера (мин)' },
+        { id: 'wait_assessment', type: 'select', label: 'Оценка времени ожидания', options: ['Приемлемо (0-5)', 'Нормально (5-15)', 'Долго (15-30)', 'Неприемлемо (30+)'] },
+        { id: 'wait_comfort', type: 'checkbox', label: 'Зона ожидания комфортна' },
+        { id: 'wait_notes', type: 'textarea', label: 'Примечания о времени ожидания' }
+      ]
+    },
+    {
+      id: 'manager_appearance',
+      name: 'Внешний вид менеджера',
+      icon: '👔',
+      questions: [
+        { id: 'mgr_suit', type: 'checkbox', label: 'Деловой костюм/форма' },
+        { id: 'mgr_clean', type: 'checkbox', label: 'Опрятный внешний вид' },
+        { id: 'mgr_badge', type: 'checkbox', label: 'Наличие бейджа/идентификатора' },
+        { id: 'mgr_fit', type: 'checkbox', label: 'Выглядит в хорошей физической форме' },
+        { id: 'mgr_appearance_rating', type: 'rating', label: 'Общее впечатление об образе (1-5)', max: 5 },
+        { id: 'mgr_communication', type: 'rating', label: 'Коммуникативные навыки (1-5)', max: 5 },
+        { id: 'mgr_name', type: 'text', label: 'Имя менеджера' },
+        { id: 'mgr_notes', type: 'textarea', label: 'Примечания о внешнем виде и профессионализме' }
+      ]
+    },
+    {
+      id: 'needs_analysis',
+      name: 'Выявление потребностей',
+      icon: '🎯',
+      questions: [
+        { id: 'need_goals', type: 'checkbox', label: 'Спросил о целях тренировок' },
+        { id: 'need_schedule', type: 'checkbox', label: 'Спросил о расписании/времени занятий' },
+        { id: 'need_level', type: 'checkbox', label: 'Спросил об уровне подготовки' },
+        { id: 'need_questions', type: 'checkbox', label: 'Задал уточняющие вопросы' },
+        { id: 'need_listening', type: 'checkbox', label: 'Искренне слушал ответы' },
+        { id: 'need_quality_rating', type: 'rating', label: 'Качество выявления потребностей (1-5)', max: 5 },
+        { id: 'need_notes', type: 'textarea', label: 'Примечания о выявлении потребностей' }
+      ]
+    },
+    {
+      id: 'facility_tour',
+      name: 'Тур по клубу',
+      icon: '🏋️',
+      questions: [
+        { id: 'tour_duration', type: 'number', label: 'Продолжительность тура (мин)' },
+        { id: 'tour_complete', type: 'checkbox', label: 'Полный тур по клубу' },
+        { id: 'tour_logic', type: 'checkbox', label: 'Логичный порядок презентации' },
+        { id: 'tour_pace', type: 'select', label: 'Темп тура', options: ['Слишком быстро', 'Оптимально', 'Слишком медленно'] },
+        { id: 'tour_explanations', type: 'rating', label: 'Качество объяснений (1-5)', max: 5 },
+        { id: 'tour_cardio', type: 'text', label: 'Кардиотренажеры — состояние' },
+        { id: 'tour_weights', type: 'text', label: 'Силовое оборудование — состояние' },
+        { id: 'tour_group_halls', type: 'text', label: 'Групповые залы — размер и оборудование' },
+        { id: 'tour_changing_rooms', type: 'checkbox', label: 'Раздевалки чистые и организованы' },
+        { id: 'tour_showers', type: 'checkbox', label: 'Душевые функциональны и чистые' },
+        { id: 'tour_notes', type: 'textarea', label: 'Примечания о состоянии зон и туре' }
+      ]
+    },
+    {
+      id: 'staff_intro',
+      name: 'Знакомство с персоналом',
+      icon: '👥',
+      questions: [
+        { id: 'staff_trainers_introduced', type: 'checkbox', label: 'Представлены тренеры' },
+        { id: 'staff_trainers_count', type: 'number', label: 'Количество представленных тренеров' },
+        { id: 'staff_professional', type: 'checkbox', label: 'Тренеры выглядят профессионально' },
+        { id: 'staff_friendly', type: 'checkbox', label: 'Персонал выглядит дружелюбным' },
+        { id: 'staff_notes', type: 'textarea', label: 'Примечания о персонале' }
+      ]
+    },
+    {
+      id: 'presentation',
+      name: 'Презентация клуба',
+      icon: '📊',
+      questions: [
+        { id: 'pres_history', type: 'checkbox', label: 'Рассказал об истории клуба' },
+        { id: 'pres_unique', type: 'checkbox', label: 'Выделил уникальные преимущества' },
+        { id: 'pres_programs', type: 'checkbox', label: 'Описал программы и услуги' },
+        { id: 'pres_materials', type: 'checkbox', label: 'Использовал материалы (буклеты, видео)' },
+        { id: 'pres_style', type: 'select', label: 'Стиль презентации', options: ['Убедительный', 'Информативный', 'Нейтральный', 'Скучный', 'Поверхностный'] },
+        { id: 'pres_enthusiasm', type: 'rating', label: 'Энтузиазм при презентации (1-5)', max: 5 },
+        { id: 'pres_notes', type: 'textarea', label: 'Примечания о презентации' }
+      ]
+    },
+    {
+      id: 'competitors',
+      name: 'Сравнение с конкурентами',
+      icon: '⚔️',
+      questions: [
+        { id: 'comp_mentioned', type: 'checkbox', label: 'Упоминал других клубов' },
+        { id: 'comp_tone', type: 'select', label: 'Тон при упоминании конкурентов', options: ['Позитивный', 'Нейтральный', 'Критичный', 'Унизительный', 'Не упоминал'] },
+        { id: 'comp_which', type: 'text', label: 'Какие клубы были упомянуты' },
+        { id: 'comp_details', type: 'textarea', label: 'Что говорил о конкурентах' }
+      ]
+    },
+    {
+      id: 'pricing',
+      name: 'Цены и членство',
+      icon: '💰',
+      questions: [
+        { id: 'price_clear', type: 'checkbox', label: 'Цены четко и честно изложены' },
+        { id: 'price_monthly', type: 'text', label: 'Месячное членство (руб.)' },
+        { id: 'price_annual', type: 'text', label: 'Годовое членство (руб.)' },
+        { id: 'price_annual_vip', type: 'text', label: 'Годовое членство ВИП (руб.)' },
+        { id: 'price_promos', type: 'checkbox', label: 'Действуют спецпредложения' },
+        { id: 'price_promos_desc', type: 'textarea', label: 'Описание промоций' },
+        { id: 'price_transparency', type: 'rating', label: 'Прозрачность ценообразования (1-5)', max: 5 },
+        { id: 'price_notes', type: 'textarea', label: 'Примечания о ценах' }
+      ]
+    },
+    {
+      id: 'sales_attempt',
+      name: 'Попытка заключить сделку',
+      icon: '🤝',
+      questions: [
+        { id: 'sales_offered', type: 'checkbox', label: 'Предложил оформить членство' },
+        { id: 'sales_persistence', type: 'select', label: 'Настойчивость предложения', options: ['Не предлагал', 'Один раз в конце', 'Несколько раз', 'Постоянно'] },
+        { id: 'sales_style', type: 'select', label: 'Стиль продаж', options: ['Мягкий', 'Активный', 'Настойчивый', 'Давящий', 'Агрессивный'] },
+        { id: 'sales_urgency', type: 'checkbox', label: 'Создавал срочность (ограниченное предложение)' },
+        { id: 'sales_pressure_rating', type: 'rating', label: 'Уровень давления (1-5)', max: 5 },
+        { id: 'sales_notes', type: 'textarea', label: 'Примечания о попытке продажи' }
+      ]
+    },
+    {
+      id: 'additional_services',
+      name: 'Дополнительные услуги',
+      icon: '✨',
+      questions: [
+        { id: 'svc_personal_training', type: 'checkbox', label: 'Упоминал персональные тренировки' },
+        { id: 'svc_pt_price', type: 'text', label: 'Цена персональной тренировки (руб.)' },
+        { id: 'svc_nutrition', type: 'checkbox', label: 'Упоминал консультации по питанию' },
+        { id: 'svc_massage', type: 'checkbox', label: 'Упоминал массаж/физиотерапию' },
+        { id: 'svc_other', type: 'text', label: 'Другие услуги' },
+        { id: 'svc_notes', type: 'textarea', label: 'Примечания о дополнительных услугах' }
+      ]
+    },
+    {
+      id: 'logistics',
+      name: 'Логистика и администрирование',
+      icon: '📋',
+      questions: [
+        { id: 'log_registration', type: 'checkbox', label: 'Объяснен процесс регистрации' },
+        { id: 'log_safety', type: 'checkbox', label: 'Объяснены правила безопасности' },
+        { id: 'log_documents', type: 'text', label: 'Какие документы требуются' },
+        { id: 'log_notes', type: 'textarea', label: 'Примечания о процессе оформления' }
+      ]
+    },
+    {
+      id: 'cleanliness',
+      name: 'Чистота и состояние',
+      icon: '🧹',
+      questions: [
+        { id: 'clean_floors', type: 'checkbox', label: 'Полы чистые' },
+        { id: 'clean_smell', type: 'checkbox', label: 'Нет неприятного запаха' },
+        { id: 'clean_equipment', type: 'checkbox', label: 'Оборудование в хорошем состоянии' },
+        { id: 'clean_changing', type: 'checkbox', label: 'Раздевалки чистые' },
+        { id: 'clean_toilets', type: 'checkbox', label: 'Туалеты чистые' },
+        { id: 'clean_showers', type: 'checkbox', label: 'Душевые чистые и функциональны' },
+        { id: 'clean_ventilation', type: 'checkbox', label: 'Хорошая вентиляция/кондиционирование' },
+        { id: 'clean_overall_rating', type: 'rating', label: 'Общая чистота (1-5)', max: 5 },
+        { id: 'clean_notes', type: 'textarea', label: 'Примечания о чистоте' }
+      ]
+    },
+    {
+      id: 'impressions',
+      name: 'Общие впечатления',
+      icon: '💭',
+      questions: [
+        { id: 'impr_positives', type: 'textarea', label: 'Главные плюсы (3-5 пунктов)' },
+        { id: 'impr_negatives', type: 'textarea', label: 'Главные минусы (3-5 пунктов)' },
+        { id: 'impr_recommendations', type: 'textarea', label: 'Рекомендации по улучшению для этого клуба' }
+      ]
+    },
+    {
+      id: 'final_assessment',
+      name: 'Финальная оценка',
+      icon: '⭐',
+      questions: [
+        { id: 'final_overall_rating', type: 'rating', label: 'Общая оценка клуба (1-10)', max: 10 },
+        { id: 'final_comparison', type: 'select', label: 'Сравнение с вашим клубом', options: ['Значительно лучше', 'Лучше', 'На одном уровне', 'Хуже', 'Значительно хуже'] },
+        { id: 'final_recommendation', type: 'select', label: 'Рекомендация', options: ['Настоятельно рекомендую', 'Рекомендую', 'Нейтрально', 'Не рекомендую', 'Категорически не рекомендую'] },
+        { id: 'final_advantages', type: 'textarea', label: 'Конкурентные преимущества нашего клуба' },
+        { id: 'final_improvements', type: 'textarea', label: 'Области для улучшения в нашем клубе' },
+        { id: 'final_ideas', type: 'textarea', label: 'Новые идеи/инновации' },
+        { id: 'final_notes', type: 'textarea', label: 'Дополнительные замечания' },
+        { id: 'visit_date', type: 'date', label: 'Дата визита' },
+        { id: 'shopper_name', type: 'text', label: 'Имя тайного покупателя' }
+      ]
+    }
+  ];
+
+  function init() {
+    renderTabs();
+    renderSections();
+    bindGlobalButtons();
+    showSection(0);
+  }
+
+  function renderTabs() {
+    const tabs = document.getElementById('tabs');
+    tabs.innerHTML = '';
+    sections.forEach((sec, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tab-btn';
+      if (index === 0) btn.classList.add('active');
+      btn.dataset.index = String(index);
+      btn.innerHTML = `<span class="icon">${sec.icon}</span><span>${index + 1}. ${sec.name}</span>`;
+      btn.addEventListener('click', () => {
+        showSection(index);
+      });
+      tabs.appendChild(btn);
+    });
+    updateStepInfo();
+  }
+
+  function renderSections() {
+    const container = document.getElementById('formContainer');
+    container.innerHTML = '';
+
+    sections.forEach((sec, index) => {
+      const div = document.createElement('div');
+      div.className = 'form-section';
+      div.id = `section-${sec.id}`;
+      if (index === 0) div.classList.add('active');
+
+      const isClubInfo = sec.id === 'club_info';
+
+      div.innerHTML = `
+        <h2 class="section-title">${sec.icon} ${sec.name}</h2>
+        ${isClubInfo ? `
+          <p class="club-intro">
+            <strong>Сначала заполните данные о клубе</strong>, а затем переходите к разделам оценки.
+          </p>
+        ` : `
+          <p class="section-subtitle">
+            Раздел ${index + 1} из ${sections.length}. Заполните поля по возможности, отмечая факты и впечатления.
+          </p>
+        `}
+        <div class="form-grid">
+        </div>
+      `;
+
+      const grid = div.querySelector('.form-grid');
+
+      sec.questions.forEach(q => {
+        const fieldWrap = document.createElement('div');
+        fieldWrap.className = 'field';
+
+        if (q.type === 'checkbox') {
+          fieldWrap.innerHTML = `
+            <div class="check-row">
+              <input type="checkbox" id="${q.id}" data-field="${q.id}">
+              <label for="${q.id}">${q.label}</label>
+            </div>
+          `;
+        } else if (q.type === 'rating') {
+          const max = q.max || 5;
+          let btns = '';
+          for (let i = 1; i <= max; i++) {
+            btns += `<button type="button" class="rating-btn" data-field="${q.id}" data-value="${i}">${i}</button>`;
+          }
+          fieldWrap.innerHTML = `
+            <div class="rating-row">
+              <div class="field-label">${q.label}</div>
+              <div class="rating-buttons">${btns}</div>
+            </div>
+          `;
+        } else if (q.type === 'select') {
+          const opts = (q.options || []).map(o => `<option value="${o}">${o}</option>`).join('');
+          fieldWrap.innerHTML = `
+            <label class="field-label" for="${q.id}">
+              <span>${q.label}</span>
+            </label>
+            <select id="${q.id}" data-field="${q.id}">
+              <option value="">— Выберите —</option>
+              ${opts}
+            </select>
+          `;
+        } else if (q.type === 'textarea') {
+          fieldWrap.innerHTML = `
+            <label class="field-label" for="${q.id}">
+              <span>${q.label}</span>
+            </label>
+            <textarea id="${q.id}" data-field="${q.id}" placeholder="${q.placeholder || ''}"></textarea>
+          `;
+        } else {
+          const typeAttr = q.type === 'number' ? 'number' : (q.type === 'date' ? 'date' : 'text');
+          fieldWrap.innerHTML = `
+            <label class="field-label" for="${q.id}">
+              <span>${q.label}</span>
+            </label>
+            <input type="${typeAttr}" id="${q.id}" data-field="${q.id}" placeholder="${q.placeholder || ''}">
+          `;
+        }
+
+        grid.appendChild(fieldWrap);
+      });
+
+      container.appendChild(div);
+    });
+
+    bindFieldEvents();
+  }
+
+  function bindFieldEvents() {
+    const inputs = document.querySelectorAll('input[data-field], textarea[data-field], select[data-field]');
+    inputs.forEach(el => {
+      const save = () => saveFieldValue(el);
+      el.addEventListener('input', save);
+      el.addEventListener('change', save);
+    });
+
+    const ratingButtons = document.querySelectorAll('.rating-btn');
+    ratingButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const fieldId = btn.dataset.field;
+        const value = btn.dataset.value;
+        const siblings = document.querySelectorAll(`.rating-btn[data-field="${fieldId}"]`);
+        siblings.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        formState[fieldId] = value;
+      });
+    });
+  }
+
+  function saveFieldValue(el) {
+    const fieldId = el.dataset.field;
+    if (!fieldId) return;
+    if (el.type === 'checkbox') {
+      formState[fieldId] = el.checked;
+    } else {
+      formState[fieldId] = el.value;
+    }
+  }
+
+  function restoreSectionValues(index) {
+    const sec = sections[index];
+    sec.questions.forEach(q => {
+      const key = q.id;
+      const value = formState[key];
+      if (value === undefined) return;
+
+      if (q.type === 'rating') {
+        const btns = document.querySelectorAll(`.rating-btn[data-field="${key}"]`);
+        btns.forEach(b => {
+          b.classList.toggle('selected', String(b.dataset.value) === String(value));
+        });
+      } else if (q.type === 'checkbox') {
+        const el = document.querySelector(`input[type="checkbox"][data-field="${key}"]`);
+        if (el) el.checked = Boolean(value);
+      } else {
+        const el = document.querySelector(`[data-field="${key}"]`);
+        if (el) el.value = value;
+      }
+    });
+  }
+
+  function showSection(index) {
+    if (index < 0 || index >= sections.length) return;
+
+    // simple validation for first section (club info)
+    if (index > 0) {
+      const nameVal = formState['club_name'];
+      if (!nameVal || String(nameVal).trim() === '') {
+        alert('Пожалуйста, заполните «Название фитнес-клуба» перед переходом к другим разделам.');
+        index = 0;
+      }
+    }
+
+    currentSectionIndex = index;
+
+    const secs = document.querySelectorAll('.form-section');
+    secs.forEach(s => s.classList.remove('active'));
+    const targetId = sections[index].id;
+    const target = document.getElementById(`section-${targetId}`);
+    if (target) target.classList.add('active');
+
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach((t, i) => {
+      t.classList.toggle('active', i === index);
+    });
+
+    updateStepInfo();
+    restoreSectionValues(index);
+    updateSectionButtons();
+  }
+
+  function updateStepInfo() {
+    const stepInfo = document.getElementById('stepInfo');
+    const sec = sections[currentSectionIndex];
+    stepInfo.textContent = `Раздел ${currentSectionIndex + 1} из ${sections.length}: ${sec.icon} ${sec.name}`;
+  }
+
+  function updateSectionButtons() {
+    const backBtn = document.getElementById('backSectionBtn');
+    const nextBtn = document.getElementById('nextSectionBtn');
+    const backClubInfoBtn = document.getElementById('backToClubInfoBtn');
+
+    backBtn.disabled = currentSectionIndex === 0;
+    nextBtn.disabled = currentSectionIndex === sections.length - 1;
+    backClubInfoBtn.style.display = currentSectionIndex === 0 ? 'none' : 'inline-flex';
+  }
+
+  function bindGlobalButtons() {
+    document.getElementById('backSectionBtn').addEventListener('click', () => {
+      showSection(currentSectionIndex - 1);
+    });
+
+    document.getElementById('nextSectionBtn').addEventListener('click', () => {
+      showSection(currentSectionIndex + 1);
+    });
+
+    document.getElementById('backToClubInfoBtn').addEventListener('click', () => {
+      showSection(0);
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if (!confirm('Очистить все данные формы?')) return;
+      for (const key in formState) {
+        if (Object.prototype.hasOwnProperty.call(formState, key)) {
+          delete formState[key];
+        }
+      }
+      const inputs = document.querySelectorAll('input[data-field], textarea[data-field], select[data-field]');
+      inputs.forEach(el => {
+        if (el.type === 'checkbox') el.checked = false;
+        else el.value = '';
+      });
+      const ratingButtons = document.querySelectorAll('.rating-btn');
+      ratingButtons.forEach(btn => btn.classList.remove('selected'));
+      showSection(0);
+    });
+
+    document.getElementById('reportBtn').addEventListener('click', () => {
+      generateReport();
+      showReportMode();
+    });
+
+    document.getElementById('editBtn').addEventListener('click', () => {
+      showFormMode();
+    });
+
+    document.getElementById('printBtn').addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  function showReportMode() {
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('navCard').style.display = 'none';
+    document.getElementById('reportCard').classList.add('active');
+  }
+
+  function showFormMode() {
+    document.getElementById('formCard').style.display = 'block';
+    document.getElementById('navCard').style.display = 'block';
+    document.getElementById('reportCard').classList.remove('active');
+    // пересохранять не нужно, просто восстановим значение секции
+    restoreSectionValues(currentSectionIndex);
+  }
+
+  function generateReport() {
+    const content = document.getElementById('reportContent');
+    content.innerHTML = '';
+
+    const clubName = formState['club_name'] || 'Не указано';
+    const visitDate = formState['visit_date'] || 'Не указана';
+    const shopperName = formState['shopper_name'] || 'Не указан';
+
+    const meta = document.getElementById('reportMeta');
+    meta.textContent = `Клуб: ${clubName} | Дата визита: ${visitDate} | Тайный покупатель: ${shopperName}`;
+
+    sections.forEach(sec => {
+      const filled = sec.questions.some(q => {
+        const v = formState[q.id];
+        return v !== undefined && v !== '' && v !== false;
+      });
+      if (!filled) return;
+
+      const secDiv = document.createElement('div');
+      secDiv.className = 'report-section';
+      secDiv.innerHTML = `<div class="report-section-title">${sec.icon} ${sec.name}</div>`;
+
+      const itemsWrap = document.createElement('div');
+
+      sec.questions.forEach(q => {
+        const v = formState[q.id];
+        if (v === undefined || v === '' || v === false) return;
+
+        const item = document.createElement('div');
+        item.className = 'report-item';
+        let valueText;
+        if (q.type === 'checkbox') {
+          valueText = 'Да';
+        } else {
+          valueText = v;
+        }
+
+        item.innerHTML = `<span class="report-item-label">${q.label}:</span> <span class="report-item-value">${valueText}</span>`;
+        itemsWrap.appendChild(item);
+      });
+
+      if (!itemsWrap.innerHTML) {
+        const empty = document.createElement('div');
+        empty.className = 'report-empty';
+        empty.textContent = 'Нет заполненных полей в этом разделе.';
+        itemsWrap.appendChild(empty);
+      }
+
+      secDiv.appendChild(itemsWrap);
+      content.appendChild(secDiv);
+    });
+
+    if (!content.innerHTML) {
+      content.innerHTML = '<p class="report-empty">Вы ещё не заполнили ни одно поле.</p>';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
